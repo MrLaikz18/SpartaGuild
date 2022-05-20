@@ -18,9 +18,13 @@ public class GuildManager {
         this.sql = new SQLGetter(plugin);
     }
 
+
+    //HASHMAPS
     private HashMap<UUID, Guild> guildes = new HashMap<UUID, Guild>();
     private HashMap<UUID, GPlayer> players = new HashMap<UUID, GPlayer>();
 
+
+    //LOADERS
     public void loadGuildes() {
         List<Guild> gds = sql.getAllGuildes();
         for(Guild g : gds) {
@@ -35,6 +39,7 @@ public class GuildManager {
         }
     }
 
+    //GETTERS
     public Guild getGuild(UUID uuid) {
         return guildes.get(uuid);
     }
@@ -59,6 +64,29 @@ public class GuildManager {
 
     public GPlayer getGPlayer(UUID uuid) {
         return players.get(uuid);
+    }
+
+    //SETTERS
+    public void createGuilde(String name, UUID owner) {
+        UUID uuid = UUID.randomUUID();
+        Guild g = new Guild(name, uuid, owner);
+        GPlayer pl = players.get(g.getUUID());
+        pl.setGuild(g);
+        pl.setRank(Rank.OWNER);
+        guildes.put(uuid, g);
+        //ACTUALISER DB
+    }
+
+    public void disbandGuilde(UUID guild) {
+        Guild g = guildes.get(guild);
+        for(UUID u : g.getAll()) {
+            if(players.containsKey(u)) {
+                GPlayer pl = players.get(u);
+                pl.leaveGuilde();
+            }
+        }
+        guildes.remove(guild);
+        //ACTUALISER DB
     }
 
 }

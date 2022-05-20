@@ -3,6 +3,7 @@ package fr.mrlaikz.spartaguild.schedules;
 import fr.mrlaikz.spartaguild.SpartaGuild;
 import fr.mrlaikz.spartaguild.objects.GPlayer;
 import fr.mrlaikz.spartaguild.objects.Guild;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class InviteSchedule extends BukkitRunnable {
         if(timer == 0) {
             GPlayer pl = SpartaGuild.getInstance().getGuildManager().getGPlayer(player);
             pl.cancelInvite(guild);
+            Bukkit.getPlayer(pl.getUUID()).sendMessage("§cL'invitation de " + guild.getName() + " a expirée");
             cancel();
         }
         timer--;

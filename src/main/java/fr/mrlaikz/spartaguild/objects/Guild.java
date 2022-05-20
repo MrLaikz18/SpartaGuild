@@ -16,13 +16,14 @@ public class Guild {
     private List<UUID> all;
     private String desc;
 
-    public Guild(String name, UUID uuid, UUID owner, String desc) {
+    public Guild(String name, UUID uuid, UUID owner) {
         this.name = name;
-        this.uuid = UUID.randomUUID();
+        this.uuid = uuid;
         this.owner = owner;
-        this.desc = desc;
+        this.desc = "";
         this.roles = new HashMap<>();
         this.all = new ArrayList<UUID>();
+        all.add(owner);
     }
 
     public Guild(String name, UUID uuid, UUID owner, List<UUID> admins, List<UUID> mods, List<UUID> members, List<UUID> all, String desc) {
@@ -34,6 +35,10 @@ public class Guild {
         roles.put(Rank.MEMBER, members);
         this.desc = desc;
         this.all = all;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public UUID getUUID() {

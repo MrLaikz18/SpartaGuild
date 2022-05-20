@@ -76,4 +76,18 @@ public class GPlayer {
         invites.remove(guild.getUUID());
     }
 
+    public void joinGuilde(Guild g) {
+        if(invites.containsKey(g)) {
+            this.guild = g;
+            invites.remove(g);
+        }
+    }
+
+    public void leaveGuilde() {
+        if(guild != null) {
+            this.guild = null;
+            this.rank = null;
+        }
+    }
+
 }
