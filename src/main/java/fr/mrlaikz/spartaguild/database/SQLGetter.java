@@ -43,7 +43,8 @@ public class SQLGetter {
                 List<UUID> mods = guildManager.getPlayerRank(uuid, Rank.MODERATOR);
                 List<UUID> members = guildManager.getPlayerRank(uuid, Rank.MEMBER);
                 List<UUID> all = guildManager.getAllMembers(uuid);
-                Guild g = new Guild(name, uuid, owner, admins, mods, members, all, desc);
+                double bal = rs.getDouble("balance");
+                Guild g = new Guild(name, uuid, owner, admins, mods, members, all, desc, bal);
                 ret.add(g);
             }
         } catch(SQLException e) {
