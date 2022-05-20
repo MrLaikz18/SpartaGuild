@@ -3,6 +3,7 @@ package fr.mrlaikz.spartaguild.objects;
 import fr.mrlaikz.spartaguild.Rank;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,9 +12,7 @@ public class Guild {
     private String name;
     private UUID uuid;
     private UUID owner;
-    private List<UUID> admins;
-    private List<UUID> mods;
-    private List<UUID> members;
+    private HashMap<Rank, List<UUID>> roles = new HashMap<Rank, List<UUID>>();
     private List<UUID> all;
     private String desc;
 
@@ -22,18 +21,17 @@ public class Guild {
         this.uuid = UUID.randomUUID();
         this.owner = owner;
         this.desc = desc;
-        this.admins = new ArrayList<UUID>();
-        this.mods = new ArrayList<UUID>();
-        this.members = new ArrayList<UUID>();
+        this.roles = new HashMap<>();
         this.all = new ArrayList<UUID>();
     }
 
     public Guild(String name, UUID uuid, UUID owner, List<UUID> admins, List<UUID> mods, List<UUID> members, List<UUID> all, String desc) {
         this.name = name;
         this.owner = owner;
-        this.admins = admins;
-        this.mods = mods;
-        this.members = members;
+        this.roles = new HashMap<>();
+        roles.put(Rank.ADMINS, admins);
+        roles.put(Rank.MODERATOR, mods);
+        roles.put(Rank.MEMBER, members);
         this.desc = desc;
         this.all = all;
     }
@@ -46,24 +44,12 @@ public class Guild {
         return all.contains(uuid);
     }
 
-    public Rank getRank(UUID uuid) {
-        if(admins.contains(uuid)) {
-            return Rank.ADMINS;
-        }
+    public List<UUID> getRankMembers(Rank rank) {
+        return roles.get(rank);
+    }
 
-        if(mods.contains(uuid)) {
-            return Rank.MODERATOR;
-        }
-
-        if(members.contains(uuid)) {
-            return Rank.MEMBER;
-        }
-
-        if(owner == uuid) {
-            return Rank.OWNER;
-        }
-
-        return null;
+    public List<UUID> getAll() {
+        return all;
     }
 
 }

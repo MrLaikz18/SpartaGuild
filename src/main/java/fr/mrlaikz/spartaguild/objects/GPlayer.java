@@ -40,6 +40,10 @@ public class GPlayer {
         return rank;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
     //SETTERS
     public void setGuild(Guild guild) {
         this.guild = guild;
@@ -47,13 +51,6 @@ public class GPlayer {
 
     public void setRank(Rank rank) {
         this.rank = rank;
-    }
-
-    //MISC
-    public static GPlayer getFromPlayer(UUID uuid) {
-        Guild g = SpartaGuild.getInstance().getGuildManager().getPlayerGuild(uuid);
-        Rank r = g.getRank(uuid);
-        return new GPlayer(uuid, g, r);
     }
 
 }

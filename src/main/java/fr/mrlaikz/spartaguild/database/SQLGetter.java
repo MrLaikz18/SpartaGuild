@@ -2,6 +2,7 @@ package fr.mrlaikz.spartaguild.database;
 
 import fr.mrlaikz.spartaguild.Rank;
 import fr.mrlaikz.spartaguild.SpartaGuild;
+import fr.mrlaikz.spartaguild.managers.GuildManager;
 import fr.mrlaikz.spartaguild.objects.GPlayer;
 import fr.mrlaikz.spartaguild.objects.Guild;
 
@@ -19,10 +20,12 @@ public class SQLGetter {
     private Connection db;
     private String users = "users";
     private String guildes = "guildes";
+    private GuildManager guildManager;
 
     public SQLGetter(SpartaGuild plugin) {
         this.plugin = plugin;
         this.db = plugin.getDatabase().getConnection();
+        this.guildManager = plugin.getGuildManager();
     }
 
     //GET ALL GUILDES
@@ -36,10 +39,10 @@ public class SQLGetter {
                 String name = rs.getString("name");
                 UUID owner = UUID.fromString(rs.getString("owner"));
                 String desc = rs.getString("desc");
-                List<UUID> admins = getRoles(uuid, Rank.ADMINS);
-                List<UUID> mods = getRoles(uuid, Rank.MODERATOR);
-                List<UUID> members = getRoles(uuid, Rank.MEMBER);
-                List<UUID> all = getAllMembers(uuid);
+                List<UUID> admins = guildManager.getPlayerRank(uuid, Rank.ADMINS);
+                List<UUID> mods = guildManager.getPlayerRank(uuid, Rank.MODERATOR);
+                List<UUID> members = guildManager.getPlayerRank(uuid, Rank.MEMBER);
+                List<UUID> all = guildManager.getAllMembers(uuid);
                 Guild g = new Guild(name, uuid, owner, admins, mods, members, all, desc);
                 ret.add(g);
             }
@@ -51,31 +54,18 @@ public class SQLGetter {
 
 
     //GET ROLE MEMBERS
-    public List<UUID> getRoles(UUID guilde, Rank rank) {
-        List<UUID> ret = new ArrayList<UUID>();
-        String name = rank.getName();
+    public List<GPlayer> getAllGPlayers() {
+        List<GPlayer> ret = new ArrayList<GPlayer>();
         try {
-            PreparedStatement ps = db.prepareStatement("SELECT * FROM " + users + " + WHERE guilde = ? AND rank = ?");
-            ps.setString(1, guilde.toString());
-            ps.setString(2, name);
+            PreparedStatement ps = db.prepareStatement("SELECT * FROM " + users);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
-                ret.add(UUID.fromString(rs.getString("uuid")));
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return ret;
-    }
-
-    public List<UUID> getAllMembers(UUID guilde) {
-        List<UUID> ret = new ArrayList<UUID>();
-        try {
-            PreparedStatement ps = db.prepareStatement("SELECT * FROM " + users + " + WHERE guilde = ?");
-            ps.setString(1, guilde.toString());
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                ret.add(UUID.fromString(rs.getString("uuid")));
+                UUID uuid = UUID.fromString(rs.getString("uuid"));
+                UUID g = UUID.fromString(rs.getString("guilde"));
+                Guild guilde = guildManager.getGuild(g);
+                Rank rank = Rank.valueOf(rs.getString("rank"));
+                GPlayer p = new GPlayer(uuid, guilde, rank);
+                ret.add(p);
             }
         } catch(SQLException e) {
             e.printStackTrace();
