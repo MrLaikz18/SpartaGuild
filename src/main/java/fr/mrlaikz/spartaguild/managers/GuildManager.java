@@ -57,4 +57,8 @@ public class GuildManager {
         return g.getRankMembers(rank);
     }
 
+    public GPlayer getGPlayer(UUID uuid) {
+        return players.get(uuid);
+    }
+
 }
